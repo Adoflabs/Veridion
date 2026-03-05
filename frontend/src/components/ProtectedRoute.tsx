@@ -15,6 +15,11 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
     async function checkAuth() {
       // DEVELOPMENT BYPASS: Auto-login with test user
       if (process.env.NODE_ENV === 'development') {
+        // Set a dummy token for development
+        const devToken = 'dev-token-bypass';
+        localStorage.setItem('ei_token', devToken);
+        api.setToken(devToken);
+        
         setUser({
           id: '9f3931aa-81ed-4801-b0b7-253ec0790a23',
           companyId: 'c7ebf8f6-4d27-4308-9c27-8fadf8983a1a',
@@ -39,6 +44,9 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
           return;
         }
 
+        // Set token in API client
+        api.setToken(token);
+
         // Verify token with backend
         const { user } = await api.getMe();
         setUser(user);
@@ -46,6 +54,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
       } catch (error) {
         console.error('Auth check failed:', error);
         localStorage.removeItem('ei_token');
+        api.clearToken();
         router.push('/login');
       }
     }
