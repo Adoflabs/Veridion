@@ -19,7 +19,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // Demo mode: Skip API call and use mock user
+      // Demo mode: Always use mock authentication
       if (email === 'admin@example.com' && password === 'password') {
         const mockUser = {
           id: 'demo-user-1',
@@ -36,37 +36,14 @@ export default function LoginPage() {
         
         // Redirect to dashboard
         router.push('/');
+        setLoading(false);
         return;
       }
 
-      // Try real API if not demo credentials
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000/api'}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Login failed');
-      }
-
-      const data = await response.json();
-      
-      // Store token in localStorage
-      if (data.token) {
-        localStorage.setItem('ei_token', data.token);
-      }
-      
-      // Update auth store
-      setUser(data.user);
-      
-      // Redirect to dashboard
-      router.push('/');
+      // Invalid credentials
+      throw new Error('Invalid credentials. Use demo credentials shown below.');
     } catch (err: any) {
       setError(err.message || 'Invalid credentials');
-    } finally {
       setLoading(false);
     }
   };
