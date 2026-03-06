@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores';
+import type { UserRole } from '@/types';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -23,9 +24,8 @@ export default function LoginPage() {
         const mockUser = {
           id: 'demo-user-1',
           email: 'admin@example.com',
-          name: 'Demo Admin',
-          role: 'admin' as const,
           companyId: 'demo-company-1',
+          role: 'owner' as UserRole,
         };
         
         // Store mock token
