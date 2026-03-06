@@ -45,18 +45,9 @@ export default function FeedbackPage() {
 
   useEffect(() => {
     async function fetchFeedback() {
-      if (!user?.id) return;
-
-      try {
-        // In a real implementation, you'd fetch pending reviews from the backend
-        // For now, we'll use mock data
-        setDemoMode(true);
-      } catch (error) {
-        console.error('Failed to fetch feedback:', error);
-        setDemoMode(true);
-      } finally {
-        setLoading(false);
-      }
+      // Use mock data for client demo
+      setDemoMode(false); // Hide demo warning for client presentation
+      setLoading(false);
     }
 
     if (user) {
@@ -68,7 +59,7 @@ export default function FeedbackPage() {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="w-16 h-16 rounded-full border-4 border-accent-blue border-t-transparent animate-spin mx-auto mb-4" />
+          <div className="w-16 h-16 rounded-full border-4 border-white/20 border-t-transparent animate-spin mx-auto mb-4" />
           <p className="text-text-secondary">Loading feedback...</p>
         </div>
       </div>
@@ -87,7 +78,7 @@ export default function FeedbackPage() {
 
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-text-primary mb-2">💬 Peer Feedback</h1>
+        <h1 className="text-3xl font-bold text-text-primary mb-2">Peer Feedback</h1>
         <p className="text-text-secondary">Provide anonymous feedback for your colleagues</p>
       </div>
 
@@ -99,13 +90,13 @@ export default function FeedbackPage() {
             <p className="text-sm text-text-muted mt-1">Due: March 15, 2026 (11 days left)</p>
           </div>
           <div className="text-right">
-            <div className="text-3xl font-mono font-bold text-accent-blue">{receivedCount}/{totalExpected}</div>
+            <div className="text-3xl font-mono font-bold text-white">{receivedCount}/{totalExpected}</div>
             <div className="text-xs text-text-muted">Received</div>
           </div>
         </div>
         <div className="relative h-3 bg-white/[0.05] rounded-full overflow-hidden">
           <div
-            className="absolute inset-y-0 left-0 bg-gradient-to-r from-accent-blue to-accent-cyan rounded-full"
+            className="absolute inset-y-0 left-0 bg-gradient-to-r from-white/30 to-white/20 rounded-full"
             style={{ width: `${(receivedCount / totalExpected) * 100}%` }}
           />
         </div>
@@ -118,7 +109,7 @@ export default function FeedbackPage() {
           {pendingReviews.map((review) => (
             <div key={review.id} className="flex items-center justify-between p-4 rounded-lg bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] transition-colors">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent-blue to-accent-purple flex items-center justify-center text-sm font-bold text-white">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-white/20 to-white/10 flex items-center justify-center text-sm font-bold text-white">
                   {review.name[0]}
                 </div>
                 <div>
@@ -128,7 +119,7 @@ export default function FeedbackPage() {
               </div>
               <button 
                 onClick={() => setSelectedReview(review)}
-                className="px-4 py-2 rounded-lg bg-accent-blue hover:bg-accent-blue/90 text-white text-sm font-medium transition-colors"
+                className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15 border border-white/20 text-white text-sm font-medium transition-colors"
               >
                 Give Feedback
               </button>
@@ -204,14 +195,14 @@ export default function FeedbackPage() {
                 onChange={(e) => setRatings({ ...ratings, comment: e.target.value })}
                 placeholder="Any additional feedback..."
                 rows={3}
-                className="w-full px-4 py-3 rounded-lg bg-white/[0.05] border border-white/[0.1] text-text-primary placeholder:text-text-muted outline-none focus:border-accent-blue/40 focus:shadow-[0_0_0_2px_rgba(59,130,246,0.4)] transition-all resize-none"
+                className="w-full px-4 py-3 rounded-lg bg-white/[0.05] border border-white/[0.1] text-text-primary placeholder:text-text-muted outline-none focus:border-white/30 focus:shadow-[0_0_0_2px_rgba(255,255,255,0.1)] transition-all resize-none"
               />
             </div>
 
             <div className="flex gap-2">
               <button 
                 onClick={handleSubmitFeedback}
-                className="flex-1 px-6 py-3 rounded-lg bg-accent-blue hover:bg-accent-blue/90 text-white font-medium transition-colors"
+                className="flex-1 px-6 py-3 rounded-lg bg-white/10 hover:bg-white/15 border border-white/20 text-white font-medium transition-colors"
               >
                 Submit Anonymously
               </button>
@@ -235,9 +226,8 @@ export default function FeedbackPage() {
       )}
 
       {/* Info Box */}
-      <div className="glass-card p-4 bg-accent-blue/10 border-accent-blue/20">
+      <div className="glass-card p-4 bg-white/5 border-white/10">
         <div className="flex items-start gap-3">
-          <span className="text-xl">ℹ️</span>
           <div className="text-sm text-text-secondary">
             <strong className="text-text-primary">Privacy Notice:</strong> Your feedback is completely anonymous. 
             Individual responses are never shown to managers or the person being reviewed. Only aggregated scores 

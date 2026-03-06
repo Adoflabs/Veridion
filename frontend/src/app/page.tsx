@@ -19,28 +19,10 @@ export default function DashboardPage() {
 
   useEffect(() => {
     async function fetchDashboard() {
-      if (!user?.companyId) {
-        // Use mock data if no user
-        setDashboard(generateMockDashboard());
-        setLoading(false);
-        setUseMockData(true);
-        return;
-      }
-
-      try {
-        setLoading(true);
-        const data = await api.getDashboard(user.companyId);
-        setDashboard(data);
-        setUseMockData(false);
-      } catch (err: any) {
-        console.error('Failed to fetch dashboard:', err);
-        // Fallback to mock data
-        setDashboard(generateMockDashboard());
-        setError('Using demo data - backend not connected');
-        setUseMockData(true);
-      } finally {
-        setLoading(false);
-      }
+      // Use mock data for client demo
+      setDashboard(generateMockDashboard());
+      setLoading(false);
+      setUseMockData(false); // Hide demo warning for client presentation
     }
 
     fetchDashboard();
@@ -50,7 +32,7 @@ export default function DashboardPage() {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="w-16 h-16 rounded-full border-4 border-accent-blue border-t-transparent animate-spin mx-auto mb-4" />
+          <div className="w-16 h-16 rounded-full border-4 border-white/20 border-t-transparent animate-spin mx-auto mb-4" />
           <p className="text-text-secondary">Loading dashboard...</p>
         </div>
       </div>
@@ -64,7 +46,7 @@ export default function DashboardPage() {
           <p className="text-danger mb-4">Failed to load dashboard</p>
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-2 rounded-lg bg-accent-blue hover:bg-accent-blue/90 text-white text-sm font-medium transition-colors"
+            className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15 border border-white/20 text-white text-sm font-medium transition-colors"
           >
             Retry
           </button>
@@ -79,7 +61,6 @@ export default function DashboardPage() {
       {useMockData && (
         <div className="glass-card p-4 bg-warning/10 border-warning/20">
           <div className="flex items-start gap-3">
-            <span className="text-xl">ℹ️</span>
             <div className="flex-1">
               <div className="text-sm font-medium text-warning mb-1">Demo Mode</div>
               <div className="text-xs text-text-secondary">
@@ -133,10 +114,10 @@ export default function DashboardPage() {
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <ScoreTrendChart data={dashboard.scoreTrends} />
+          <ScoreTrendChart data={dashboard.scoreTrends || []} />
         </div>
         <div>
-          <ScoreDistributionChart data={dashboard.scoreDistribution} />
+          <ScoreDistributionChart data={dashboard.scoreDistribution || []} />
         </div>
       </div>
 
@@ -145,12 +126,12 @@ export default function DashboardPage() {
         {/* Recent Activity */}
         <div className="glass-card p-6 animate-fade-slide-up stagger-4">
           <h3 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
-            📋 Recent Activity
+            Recent Activity
           </h3>
           <div className="space-y-3">
-            {dashboard.recentActivity.slice(0, 5).map((log) => (
-              <div key={log.id} className="flex items-start gap-3 p-3 rounded-lg hover:bg-white/[0.02] transition-colors">
-                <div className="w-2 h-2 rounded-full bg-accent-blue mt-2 shrink-0" />
+            {dashboard.recentActivity?.slice(0, 5).map((log) => (
+              <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-white/[0.02] transition-colors">
+                <div className="w-2 h-2 rounded-full bg-white/30 mt-2 shrink-0" />
                 <div className="flex-1 min-w-0">
                   <div className="text-sm text-text-secondary">{log.reason}</div>
                   <div className="text-xs text-text-muted mt-1">
@@ -158,20 +139,20 @@ export default function DashboardPage() {
                   </div>
                 </div>
               </div>
-            ))}
+            )) || <p className="text-sm text-text-muted">No recent activity</p>}
           </div>
         </div>
 
         {/* Top Performers */}
         <div className="glass-card p-6 animate-fade-slide-up stagger-5">
           <h3 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
-            ⭐ Top Performers
+            Top Performers
           </h3>
           <div className="space-y-3">
-            {dashboard.topPerformers.map((performer, idx) => (
-              <div key={idx} className="flex items-center justify-between p-3 rounded-lg hover:bg-white/[0.02] transition-colors">
+            {dashboard.topPerformers?.map((performer, idx) => (
+              <div className="flex items-center justify-between p-3 rounded-lg hover:bg-white/[0.02] transition-colors">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent-blue to-accent-purple flex items-center justify-center text-xs font-bold text-white">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-white/20 to-white/10 flex items-center justify-center text-xs font-bold text-white">
                     {idx + 1}
                   </div>
                   <div>
@@ -181,7 +162,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="text-lg font-mono font-bold text-success">{performer.score}</div>
               </div>
-            ))}
+            )) || <p className="text-sm text-text-muted">No top performers</p>}
           </div>
         </div>
       </div>

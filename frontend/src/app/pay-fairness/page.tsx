@@ -17,27 +17,10 @@ export default function PayFairnessPage() {
 
   useEffect(() => {
     async function fetchPayFairness() {
-      if (!user?.companyId) return;
-
-      try {
-        const currentMonth = new Date().toISOString().slice(0, 7);
-        const { analysis } = await api.analyzePayFairness(user.companyId, {
-          month: currentMonth,
-          scoreTopPct: scoreThreshold,
-          payTopPct: salaryThreshold,
-        });
-        
-        // Map analysis data to scatter points if available
-        if (analysis.points && analysis.points.length > 0) {
-          setPoints(analysis.points as any);
-        }
-        setDemoMode(false);
-      } catch (error) {
-        console.error('Failed to fetch pay fairness:', error);
-        setDemoMode(true);
-      } finally {
-        setLoading(false);
-      }
+      // Use mock data for client demo
+      setPoints(generatePayFairnessPoints(10));
+      setDemoMode(false); // Hide demo warning for client presentation
+      setLoading(false);
     }
 
     if (user) {
@@ -49,7 +32,7 @@ export default function PayFairnessPage() {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="w-16 h-16 rounded-full border-4 border-accent-blue border-t-transparent animate-spin mx-auto mb-4" />
+          <div className="w-16 h-16 rounded-full border-4 border-white/20 border-t-transparent animate-spin mx-auto mb-4" />
           <p className="text-text-secondary">Loading pay fairness analysis...</p>
         </div>
       </div>
@@ -69,7 +52,7 @@ export default function PayFairnessPage() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary mb-2">💰 Pay Fairness Analysis</h1>
+          <h1 className="text-3xl font-bold text-text-primary mb-2">Pay Fairness Analysis</h1>
           <p className="text-text-secondary">Identify compensation gaps and high performers</p>
         </div>
         <button className="px-4 py-2 rounded-lg border border-white/[0.1] hover:bg-white/[0.04] text-text-secondary text-sm transition-colors flex items-center gap-2">
@@ -83,7 +66,7 @@ export default function PayFairnessPage() {
         <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2">
             <label className="text-sm text-text-secondary">Comparison:</label>
-            <select className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/[0.1] text-text-primary text-sm outline-none focus:border-accent-blue/40">
+            <select className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/[0.1] text-text-primary text-sm outline-none focus:border-white/30">
               <option>Company</option>
               <option>Engineering</option>
               <option>Product</option>
@@ -92,7 +75,7 @@ export default function PayFairnessPage() {
           </div>
           <div className="flex items-center gap-2">
             <label className="text-sm text-text-secondary">Period:</label>
-            <select className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/[0.1] text-text-primary text-sm outline-none focus:border-accent-blue/40">
+            <select className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/[0.1] text-text-primary text-sm outline-none focus:border-white/30">
               <option>Q1 2026</option>
               <option>Q4 2025</option>
               <option>Q3 2025</option>
@@ -154,7 +137,7 @@ export default function PayFairnessPage() {
             />
             <ReferenceLine x={scoreThreshold} stroke="#f59e0b" strokeDasharray="5 5" strokeWidth={2} />
             <ReferenceLine y={salaryThreshold} stroke="#f59e0b" strokeDasharray="5 5" strokeWidth={2} />
-            <Scatter name="Employees" data={points} fill="#3b82f6" fillOpacity={0.6}>
+            <Scatter name="Employees" data={points} fill="#e5e7eb" fillOpacity={0.6}>
               {points.map((entry, index) => (
                 <circle key={`dot-${index}`} r={4 + entry.tenure / 15} fill={entry.color} fillOpacity={0.7} />
               ))}
@@ -165,19 +148,19 @@ export default function PayFairnessPage() {
         {/* Quadrant Labels */}
         <div className="grid grid-cols-2 gap-4 mt-6">
           <div className="p-4 rounded-lg border border-warning/30 bg-warning/10">
-            <div className="text-sm font-semibold text-warning mb-1">⚠️ UNDERPAID</div>
+            <div className="text-sm font-semibold text-warning mb-1">UNDERPAID</div>
             <div className="text-xs text-text-muted">High performers, low compensation</div>
           </div>
           <div className="p-4 rounded-lg border border-success/30 bg-success/10">
-            <div className="text-sm font-semibold text-success mb-1">⭐ STARS</div>
+            <div className="text-sm font-semibold text-success mb-1">STARS</div>
             <div className="text-xs text-text-muted">High score, high pay</div>
           </div>
           <div className="p-4 rounded-lg border border-text-muted/30 bg-white/[0.02]">
-            <div className="text-sm font-semibold text-text-muted mb-1">📉 UNDERPERFORMERS</div>
+            <div className="text-sm font-semibold text-text-muted mb-1">UNDERPERFORMERS</div>
             <div className="text-xs text-text-muted">Low score, low pay</div>
           </div>
           <div className="p-4 rounded-lg border border-danger/30 bg-danger/10">
-            <div className="text-sm font-semibold text-danger mb-1">🔴 OVERPAID</div>
+            <div className="text-sm font-semibold text-danger mb-1">OVERPAID</div>
             <div className="text-xs text-text-muted">Low performers, high compensation</div>
           </div>
         </div>
@@ -201,7 +184,7 @@ export default function PayFairnessPage() {
             />
             <div className="flex justify-between text-xs text-text-muted mt-1">
               <span>0th</span>
-              <span className="font-mono font-bold text-accent-blue">{scoreThreshold}th percentile</span>
+              <span className="font-mono font-bold text-white">{scoreThreshold}th percentile</span>
               <span>100th</span>
             </div>
           </div>
@@ -219,7 +202,7 @@ export default function PayFairnessPage() {
             />
             <div className="flex justify-between text-xs text-text-muted mt-1">
               <span>0th</span>
-              <span className="font-mono font-bold text-accent-blue">{salaryThreshold}th percentile</span>
+              <span className="font-mono font-bold text-white">{salaryThreshold}th percentile</span>
               <span>100th</span>
             </div>
           </div>

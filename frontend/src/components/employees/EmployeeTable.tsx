@@ -26,12 +26,12 @@ export default function EmployeeTable({ employees, onRowClick }: EmployeeTablePr
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <h2 className="text-xl font-bold text-text-primary flex items-center gap-2">
-          👥 Employees
+          Employees
           <span className="text-sm font-normal text-text-muted">({filteredEmployees.length})</span>
         </h2>
 
         <div className="flex items-center gap-2 flex-wrap">
-          <button className="px-3 py-2 rounded-lg bg-accent-blue hover:bg-accent-blue/90 text-white text-sm font-medium transition-colors flex items-center gap-2">
+          <button className="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/15 border border-white/20 text-white text-sm font-medium transition-colors flex items-center gap-2">
             <UserPlus className="w-4 h-4" />
             Add Employee
           </button>
@@ -51,7 +51,7 @@ export default function EmployeeTable({ employees, onRowClick }: EmployeeTablePr
             placeholder="Search employees..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-lg bg-white/[0.05] border border-white/[0.1] text-text-primary placeholder:text-text-muted outline-none focus:border-accent-blue/40 focus:shadow-[0_0_0_2px_rgba(59,130,246,0.4)] transition-all"
+            className="w-full pl-10 pr-4 py-2 rounded-lg bg-white/[0.05] border border-white/[0.1] text-text-primary placeholder:text-text-muted outline-none focus:border-white/30 focus:shadow-[0_0_0_2px_rgba(255,255,255,0.1)] transition-all"
           />
         </div>
         <button className="px-4 py-2 rounded-lg border border-white/[0.1] hover:bg-white/[0.04] text-text-secondary text-sm transition-colors flex items-center gap-2">
@@ -101,7 +101,7 @@ export default function EmployeeTable({ employees, onRowClick }: EmployeeTablePr
               >
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent-blue to-accent-purple flex items-center justify-center text-sm font-bold text-white shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-white/20 to-white/10 flex items-center justify-center text-sm font-bold text-white shrink-0">
                       {employee.name?.[0]?.toUpperCase() || 'E'}
                     </div>
                     <div>
@@ -162,7 +162,7 @@ export default function EmployeeTable({ employees, onRowClick }: EmployeeTablePr
           <button className="px-3 py-1.5 rounded-lg border border-white/[0.1] hover:bg-white/[0.04] text-text-secondary text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
             Previous
           </button>
-          <button className="px-3 py-1.5 rounded-lg bg-accent-blue/20 border border-accent-blue/30 text-accent-blue text-sm font-medium">
+          <button className="px-3 py-1.5 rounded-lg bg-white/10 border border-white/20 text-white text-sm font-medium">
             1
           </button>
           <button className="px-3 py-1.5 rounded-lg border border-white/[0.1] hover:bg-white/[0.04] text-text-secondary text-sm transition-colors">

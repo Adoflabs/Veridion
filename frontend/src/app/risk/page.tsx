@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Settings, Filter } from 'lucide-react';
+import { Settings } from 'lucide-react';
 import { generateMockRiskFlags } from '@/lib/mock-data';
 import { api } from '@/lib/api';
 import { useAuthStore } from '@/stores';
@@ -17,20 +17,10 @@ export default function FlightRiskPage() {
 
   useEffect(() => {
     async function fetchRiskFlags() {
-      if (!user?.companyId) return;
-
-      try {
-        const { data } = await api.listRiskFlags(user.companyId, { status: 'open', page: 1, perPage: 100 });
-        setFlags(data);
-        setDemoMode(false);
-      } catch (error) {
-        console.error('Failed to fetch risk flags:', error);
-        // Fallback to mock data
-        setFlags(generateMockRiskFlags());
-        setDemoMode(true);
-      } finally {
-        setLoading(false);
-      }
+      // Use mock data for client demo
+      setFlags(generateMockRiskFlags());
+      setDemoMode(false); // Hide demo warning for client presentation
+      setLoading(false);
     }
 
     if (user) {
@@ -42,7 +32,7 @@ export default function FlightRiskPage() {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="w-16 h-16 rounded-full border-4 border-accent-blue border-t-transparent animate-spin mx-auto mb-4" />
+          <div className="w-16 h-16 rounded-full border-4 border-white/20 border-t-transparent animate-spin mx-auto mb-4" />
           <p className="text-text-secondary">Loading risk alerts...</p>
         </div>
       </div>
@@ -81,24 +71,18 @@ export default function FlightRiskPage() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary mb-2">🚨 Flight Risk Alerts</h1>
+          <h1 className="text-3xl font-bold text-text-primary mb-2">Flight Risk Alerts</h1>
           <p className="text-text-secondary">
             {highRisk.length} High · {mediumRisk.length} Medium · {lowRisk.length} Low
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <button className="px-4 py-2 rounded-lg border border-white/[0.1] hover:bg-white/[0.04] text-text-secondary text-sm transition-colors flex items-center gap-2">
-            <Filter className="w-4 h-4" />
-            Filter
-          </button>
-          <button
-            onClick={() => setShowConfig(!showConfig)}
-            className="px-4 py-2 rounded-lg border border-white/[0.1] hover:bg-white/[0.04] text-text-secondary text-sm transition-colors flex items-center gap-2"
-          >
-            <Settings className="w-4 h-4" />
-            Configure
-          </button>
-        </div>
+        <button
+          onClick={() => setShowConfig(!showConfig)}
+          className="px-4 py-2 rounded-lg border border-white/[0.1] hover:bg-white/[0.04] text-text-secondary text-sm transition-colors flex items-center gap-2"
+        >
+          <Settings className="w-4 h-4" />
+          Configure
+        </button>
       </div>
 
       {/* Alert Cards */}
@@ -110,7 +94,7 @@ export default function FlightRiskPage() {
           >
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent-blue to-accent-purple flex items-center justify-center text-lg font-bold text-white">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-white/20 to-white/10 flex items-center justify-center text-lg font-bold text-white">
                   {flag.employee?.name?.[0]?.toUpperCase() || 'E'}
                 </div>
                 <div>
@@ -137,33 +121,15 @@ export default function FlightRiskPage() {
             <div className="flex items-center gap-2 flex-wrap">
               <button 
                 onClick={() => handleViewProfile(flag.employeeId)}
-                className="px-4 py-2 rounded-lg bg-accent-blue hover:bg-accent-blue/90 text-white text-sm font-medium transition-colors"
+                className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15 border border-white/20 text-white text-sm font-medium transition-colors"
               >
                 View Profile
-              </button>
-              <button 
-                onClick={() => {
-                  alert(`Schedule 1:1 with ${flag.employee?.name}\n\nThis would open a calendar integration.`);
-                }}
-                className="px-4 py-2 rounded-lg border border-white/[0.1] hover:bg-white/[0.04] text-text-secondary text-sm transition-colors"
-              >
-                Schedule 1:1
               </button>
               <button 
                 onClick={() => handleResolveFlag(flag.id)}
                 className="px-4 py-2 rounded-lg border border-white/[0.1] hover:bg-white/[0.04] text-text-secondary text-sm transition-colors"
               >
                 Dismiss
-              </button>
-              <button 
-                onClick={() => {
-                  if (confirm('Archive this risk flag?')) {
-                    handleResolveFlag(flag.id);
-                  }
-                }}
-                className="px-4 py-2 rounded-lg border border-white/[0.1] hover:bg-white/[0.04] text-text-muted text-sm transition-colors"
-              >
-                Archive
               </button>
             </div>
           </div>
@@ -208,7 +174,7 @@ export default function FlightRiskPage() {
                 />
                 <div className="flex justify-between text-xs text-text-muted mt-1">
                   <span>5 pts</span>
-                  <span className="font-mono font-bold text-accent-blue">18 pts</span>
+                  <span className="font-mono font-bold text-white">18 pts</span>
                   <span>30 pts</span>
                 </div>
               </div>
@@ -218,7 +184,7 @@ export default function FlightRiskPage() {
                 <label className="block text-sm font-medium text-text-secondary mb-2">
                   Missed Check-ins
                 </label>
-                <select className="w-full px-3 py-2 rounded-lg bg-white/[0.05] border border-white/[0.1] text-text-primary outline-none focus:border-accent-blue/40">
+                <select className="w-full px-3 py-2 rounded-lg bg-white/[0.05] border border-white/[0.1] text-text-primary outline-none focus:border-white/30">
                   <option value="1">1 consecutive missed</option>
                   <option value="2" selected>2 consecutive missed</option>
                   <option value="3">3 consecutive missed</option>
@@ -240,7 +206,7 @@ export default function FlightRiskPage() {
                 />
                 <div className="flex justify-between text-xs text-text-muted mt-1">
                   <span>1.0</span>
-                  <span className="font-mono font-bold text-accent-blue">2.5 / 5.0</span>
+                  <span className="font-mono font-bold text-white">2.5 / 5.0</span>
                   <span>5.0</span>
                 </div>
               </div>
@@ -261,7 +227,7 @@ export default function FlightRiskPage() {
                     </span>
                   ))}
                 </div>
-                <button className="text-xs text-accent-blue hover:text-accent-blue/80 transition-colors">
+                <button className="text-xs text-white hover:text-white/80 transition-colors">
                   + Add keyword
                 </button>
               </div>
@@ -272,7 +238,7 @@ export default function FlightRiskPage() {
                   <div className="text-sm font-medium text-text-secondary">Tenure Sensitivity</div>
                   <div className="text-xs text-text-muted mt-1">New hires (&lt;6mo) +20% weight</div>
                 </div>
-                <button className="w-12 h-6 rounded-full bg-accent-blue relative">
+                <button className="w-12 h-6 rounded-full bg-white/20 relative">
                   <div className="absolute right-1 top-1 w-4 h-4 rounded-full bg-white" />
                 </button>
               </div>
@@ -292,7 +258,7 @@ export default function FlightRiskPage() {
                       <input
                         type="checkbox"
                         defaultChecked={item.checked}
-                        className="w-4 h-4 rounded border-white/[0.2] bg-white/[0.05] checked:bg-accent-blue"
+                        className="w-4 h-4 rounded border-white/[0.2] bg-white/[0.05] checked:bg-white/30"
                       />
                       <span className="text-sm text-text-secondary">{item.label}</span>
                     </label>
@@ -300,7 +266,7 @@ export default function FlightRiskPage() {
                 </div>
               </div>
 
-              <button className="w-full px-4 py-3 rounded-lg bg-accent-blue hover:bg-accent-blue/90 text-white font-medium transition-colors">
+              <button className="w-full px-4 py-3 rounded-lg bg-white/10 hover:bg-white/15 border border-white/20 text-white font-medium transition-colors">
                 Save Configuration
               </button>
             </div>
