@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores';
-import { api } from '@/lib/api';
+import type { UserRole } from '@/types';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -19,34 +19,31 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Login failed');
+      // Demo mode: Always use mock authentication
+      if (email === 'admin@example.com' && password === 'password') {
+        const mockUser = {
+          id: 'demo-user-1',
+          email: 'admin@example.com',
+          companyId: 'demo-company-1',
+          role: 'owner' as UserRole,
+        };
+        
+        // Store mock token
+        localStorage.setItem('ei_token', 'demo-token-12345');
+        
+        // Update auth store
+        setUser(mockUser);
+        
+        // Redirect to dashboard
+        router.push('/');
+        setLoading(false);
+        return;
       }
 
-      const data = await response.json();
-      
-      // Store token in localStorage and API client
-      if (data.token) {
-        localStorage.setItem('ei_token', data.token);
-        api.setToken(data.token);
-      }
-      
-      // Update auth store
-      setUser(data.user);
-      
-      // Redirect to dashboard
-      router.push('/');
+      // Invalid credentials
+      throw new Error('Invalid credentials. Use demo credentials shown below.');
     } catch (err: any) {
       setError(err.message || 'Invalid credentials');
-    } finally {
       setLoading(false);
     }
   };
@@ -55,13 +52,11 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="glass-card p-8 w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-20 h-20 rounded-2xl bg-white flex items-center justify-center mx-auto mb-4 shadow-lg">
-            <svg viewBox="0 0 100 100" className="w-12 h-12" fill="currentColor">
-              <text x="50" y="75" fontSize="80" fontWeight="bold" textAnchor="middle" fill="#0a0e1a">V</text>
-            </svg>
+          <div className="w-16 h-16 rounded-lg bg-white/[0.05] border border-white/[0.1] flex items-center justify-center mx-auto mb-4">
+            <span className="text-3xl font-bold text-white">V</span>
           </div>
           <h1 className="text-2xl font-bold text-text-primary mb-2">Veridion</h1>
-          <p className="text-sm text-text-secondary">Employee Intelligence Platform</p>
+          <p className="text-sm text-text-secondary">Sign in to your account</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-4">
@@ -102,7 +97,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full px-4 py-3 rounded-lg bg-white/10 hover:bg-white/15 text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-white/20"
+            className="w-full px-4 py-3 rounded-lg bg-accent-blue hover:bg-accent-blue/90 text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Signing in...' : 'Sign In'}
           </button>

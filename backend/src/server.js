@@ -9,8 +9,26 @@ async function bootstrap() {
     throw new Error('[server] DATABASE_URL is missing. Set it in backend/.env before starting the API.');
   }
 
-  await prisma.$connect();
-  console.log('[server] connected to PostgreSQL');
+  // Retry database connection with exponential backoff
+  let retries = 5;
+  let delay = 1000;
+  
+  while (retries > 0) {
+    try {
+      await prisma.$connect();
+      console.log('[server] connected to PostgreSQL');
+      break;
+    } catch (error) {
+      retries--;
+      if (retries === 0) {
+        console.error('[server] failed to connect to database after multiple attempts');
+        throw error;
+      }
+      console.log(`[server] database connection failed, retrying in ${delay}ms... (${retries} attempts left)`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+      delay *= 2; // Exponential backoff
+    }
+  }
 
   app.listen(env.port, () => {
     console.log(`[server] listening on :${env.port}`);
